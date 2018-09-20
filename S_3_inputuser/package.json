@@ -1,0 +1,14 @@
+{
+  "name": "s_3_thirdparty",
+  "version": "1.0.0",
+  "description": "thirdpart",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MM",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
+}
