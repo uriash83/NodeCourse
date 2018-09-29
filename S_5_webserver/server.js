@@ -29,9 +29,11 @@ app.use((req,res,next)=>{
 // ale niedotyczy to np. help.html której ścieżka jest statyczna 
 // żeby to zablokować należy: app.use(express.static(__dirname + '/public')); 
 // umieścić za poniższym middlware 
-app.use((req,res,next)=>{
-    res.render('maintenance.hbs');
-});
+
+
+// app.use((req,res,next)=>{
+//     res.render('maintenance.hbs');
+// });
 
 app.get('/',(req,res)=>{
     //res.send('<h1>Hello Expres</h1>');
@@ -53,6 +55,14 @@ app.get('/about',(req,res)=>{
         pageTitle: 'About page MM',
         currentYear: new Date().getFullYear(),
         welcomeMessage: 'IT WORKS'
+    });
+});
+
+app.get('/project',(req,res)=>{
+    res.render('project.hbs',{
+        pageTitle: 'Project page MM',
+        currentYear: new Date().getFullYear(),
+        welcomeMessage: 'Project WORKS'
     });
 });
 app.get('/bad',(req,res)=>{
