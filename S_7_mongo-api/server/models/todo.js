@@ -6,6 +6,7 @@ var Todo = mongoose.model('Todo',{
         required: true,
         minlenght: 1,
         trim: true  // przycia 
+        //https://mongoosejs.com/docs/validation.html
     },
     completed: {
         type: Boolean,
