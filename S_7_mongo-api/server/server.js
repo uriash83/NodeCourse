@@ -4,9 +4,10 @@ var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo')
 var {User} = require('./models/user')
+const {ObjectID} = require('mongodb');
 
 var app = express();
-
+const port = process.env.PORT || 3000; // process.env dla HEROKU
 app.use(bodyParser.json());
 
 app.post('/todos', (req,res) => {
@@ -34,8 +35,25 @@ app.get('/todos', (req,res) => {
     })
 });
 
-app.listen(3000 ,() => {
-    console.log('Serve runon 3000 port');
+app.get('/todos/:id',(req,res) => {
+    var id = req.params.id;
+
+    if(!ObjectID.isValid(id)){
+        res.status(400).send('Invalid ID');
+    }
+    Todo.findById(id).then((todo) => {
+        if(!todo){
+            console.log('404')
+            res.status(404).send('ID not found');
+        }
+        console.log('200');
+        res.status(200).send(`Todo${todo}`);
+    }).catch((e) => res.status(400).send('Error:',e))
+    
+});
+
+app.listen(port ,() => {
+    console.log(`Start at port ${port}`);
 });
 
 module.export = {app};
