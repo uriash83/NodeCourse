@@ -35,6 +35,15 @@ app.get('/todos', (req,res) => {
     })
 });
 
+app.get('/', (req,res)=>{
+    res.send({
+        status: 200,
+        text: 'MM'
+    });
+},(e)=>{
+    res.status(400).send(e);
+});
+
 app.get('/todos/:id',(req,res) => {
     var id = req.params.id;
 
