@@ -7,11 +7,19 @@ var mongoose = require('mongoose');
 //      console.log("err",err)
 //  });
 
-mongoose.connect('mongodb+srv://node-rest:'+ process.env.MONGO_ATLAS_PW+'@cluster0-cstkp.mongodb.net/test',{
 
-	auth: {
-      user: "node-rest",
-      password: "node-rest"
-    }
-	
-}); 
+mongoose.Promise = global.Promise;
+// dla local : mongoose.connect('mongodb://localhost:27017/TodoApp',{ useNewUrlParser: true });
+mongoose.connect('mongodb://<uriash>:<1qazZXCVB>@ds249092.mlab.com:49092/climb',
+    { useNewUrlParser: true }).then(()=>{
+
+    },(e)=>{
+        console.log(e);
+    })
+
+
+
+module.exports = {
+    //mongoose: mongoose
+    mongoose
+}

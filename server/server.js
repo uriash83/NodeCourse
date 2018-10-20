@@ -24,6 +24,28 @@ app.post('/todos', (req,res) => {
     });
 });
 
+app.delete('/todos/:id',(req,res)=>{
+    var id = req.params.id;
+
+    if(!ObjectID.isValid(id)){
+        res.status(404).send('Invalid ID');
+    }
+    Todo.deleteOne({
+        _id: id
+    }).then((todo)=>{
+        if(!todo){              //w mongoose obiekt nie jest pusty naewt jeśli zwróci zero 
+            console.log("Doc is empty");
+            res.status(404).send('Empty doc');
+            
+        }        
+            res.send(todo);
+            console.log('removed todo') 
+        
+    }).catch((e)=>{
+        res.status(400).send('Error ')
+    });
+});
+
 app.get('/todos', (req,res) => {
     Todo.find().then((todos) => {
         res.send({
