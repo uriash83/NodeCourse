@@ -10,8 +10,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/TodoApp',
 
     },(e)=>{
         console.log(e);
-    })
-    
+    });
+mongoose.set('useCreateIndex', true);    // bez tego w nowym mongoose wywalało: collection.ensureindex is deprecated
 module.exports = {
     //mongoose: mongoose
     mongoose

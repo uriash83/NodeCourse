@@ -7,18 +7,33 @@ var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo')
 var {User} = require('./models/user')
+var {authenticate} = require('./middleware/authenticate');
 const {ObjectID} = require('mongodb');
 
 var app = express();
 const port = process.env.PORT || 3000; // process.env dla HEROKU
 app.use(bodyParser.json());
 
-app.post('/todos', (req,res) => {
+app.get('/todos', authenticate,(req,res) => {
+    Todo.find({
+        _creator: req.user._id
+    }).then((todos) => {
+        res.send({
+            status: 200,
+            todos
+        });
+    }, (e) => {
+        res.status(400).send(e);
+    })
+});
+
+app.post('/todos', authenticate, (req,res) => {
     console.log(req.body);
     var todo = new Todo({
        text: req.body.text,
        completed: req.body.completed,
-       completedAt: req.body.completedAt 
+       completedAt: req.body.completedAt,
+       _creator: req.user._id 
     })
     todo.save().then((doc)=> {
         res.send(doc);
@@ -71,16 +86,7 @@ app.patch('/todos/:id',(req,res)=>{
     });
 });
 
-app.get('/todos', (req,res) => {
-    Todo.find().then((todos) => {
-        res.send({
-            status: 200,
-            todos
-        });
-    }, (e) => {
-        res.status(400).send(e);
-    })
-});
+
 
 app.get('/', (req,res)=>{
     res.send({
@@ -106,6 +112,47 @@ app.get('/todos/:id',(req,res) => {
         res.status(200).send(`Todo${todo}`);
     }).catch((e) => res.status(400).send('Error:',e))
     
+});
+/////////////////////////////////////////////////////////////////////////////////////////
+//                      USER                                                           //
+/////////////////////////////////////////////////////////////////////////////////////////
+
+app.post('/users',(req,res)=>{
+    var body = _.pick(req.body ,['email','password']);
+    var user = new User(body);
+    user.save().then(()=>{
+        return user.generateAuthToken(); //jest return because of chain promises
+    }).then((token)=>{
+        res.header('x-auth',token).send(user);
+    }).catch((e)=>{
+        res.status(400).send(e);
+    });
+});
+
+app.get('/users/me', authenticate ,(req,res)=>{
+    res.send(req.user);// bo req został nadpiane w authenticate
+});
+
+app.post('/users/login',(req,res)=>{
+    var body = _.pick(req.body,['email','password']);
+    var user = new User(body);
+    User.findByCredentials(body.email,body.password).then((user)=>{
+        return user.generateAuthToken().then((token)=>{
+            res.header('x-auth',token).send(user);
+        });
+        res.status(200).send({text: 'Login uscces',user: user})
+    }).catch((e)=>{
+        res.status(400).send(e);
+    });
+    
+});
+
+app.delete('/users/me/token',authenticate, (req,res)=>{
+    req.user.removeToken(req.token).then(()=>{
+        res.status(200).send();
+    },()=>{
+        res.status(400).send();
+    });
 });
 
 app.listen(port ,() => {
