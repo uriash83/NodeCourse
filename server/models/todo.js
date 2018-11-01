@@ -16,10 +16,6 @@ var Todo = mongoose.model('Todo',{
         type: Number,
         default: null // nie jest wymagane , a gdy todo zosatnie utworzone to completedAt będzie= null boto liczba
     
-    },
-    _creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
     }
 });
 
